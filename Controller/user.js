@@ -1,4 +1,5 @@
 const User = require("../Models/user.js");
+const Rate = require("../Models/Rates.js");
 const bcrypt = require("bcrypt")
 const { ERRORS } = require("../Constant/index.js")
 const encrypt = require("../Utils/encript.js")
@@ -19,7 +20,15 @@ const register = async (req, res, next) => {
         }
     }
 
-    const { lastname, firstname, password, address, type, confirm, subuser, email } = req.body;
+    const { lastname, firstname, password, address, type, confirm, subuser, email, rates_id } = req.body;
+
+    var rates = await Rate.findById(rates_id)
+
+    if (!rates) {
+        console.log("gsgsggs", rates)
+        return next(ERRORS.SOMETHING_WRONG)
+    }
+
     if (await User.findOne({ email: body.email })) {
         return next(ERRORS.DUPLICATE_EMAIL)
     }
@@ -52,7 +61,8 @@ const register = async (req, res, next) => {
             address,
             type,
             subuser,
-            email
+            email,
+            rates_id: rates._id
         });
 
         data = await makeUser.save();

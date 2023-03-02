@@ -4,8 +4,10 @@ const apiBase = express();
 const mongoDbconnection = require("mongoose")
 dotenv.config();
 const auth = require("./Routes/user.js")
+const rate = require("./Routes/Rate.js")
 apiBase.use(express.json());
 apiBase.use("/", auth);
+apiBase.use("/api", rate);
 
 
 
