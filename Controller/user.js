@@ -51,8 +51,6 @@ const register = async (req, res, next) => {
     }
 
     var data;
-
-
     try {
         const makeUser = new User({
             lastname,
@@ -64,10 +62,35 @@ const register = async (req, res, next) => {
             email,
             rates_id: rates._id
         });
-
         data = await makeUser.save();
+        let userMatch = await User.aggregate([
+            {
+                $match: {
+                    email
+                }
+
+            },
+            {
+                $lookup: {
+
+                    from: "rates",
+                    localField: "rates_id",
+                    foreignField: "_id",
+                    as: "Rates",
+
+                },
+
+            },
+            {
+                $project: {
+                    "rates_id": 0,
+                    "Rates.user_id": 0
+                }
+            }
+
+        ]);
         var token = await encrypt(data, { expiresIn: 80000 });
-        return res.status(201).send({ status: 201, message: "user created successfully", data: data, token: token })
+        return res.status(201).send({ status: 201, message: "user created successfully", data: userMatch, token: token })
     } catch (e) {
         console.log(e)
         return next(ERRORS.SOMETHING_WRONG);
