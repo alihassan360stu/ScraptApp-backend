@@ -11,9 +11,6 @@ const rates = new mongoose.Schema({
     srass: {
         type: String
     },
-    sead: {
-        type: String
-    },
     stainless_steel: {
         type: String
     },
@@ -35,11 +32,6 @@ const rates = new mongoose.Schema({
     paper: {
         type: String
     },
-    user_id: {
-        type: mongoose.Schema.Types.ObjectId,
-        require: true,
-        ref: "User"
-    }
 })
 
 

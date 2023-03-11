@@ -5,12 +5,11 @@ const mongoDbconnection = require("mongoose")
 dotenv.config();
 const auth = require("./Routes/user.js")
 const rate = require("./Routes/Rate.js")
+var cors = require('cors')
 apiBase.use(express.json());
 apiBase.use("/", auth);
-apiBase.use("/api", rate);
-
-
-
+apiBase.use("/user", rate);
+apiBase.use(cors())
 apiBase.use((err, res, req, next) => {
     const { status } = err || 500;
     const { message } = err || "some thing went wrong"
