@@ -2,7 +2,71 @@ const User = require("../Models/user.js");
 const Rate = require("../Models/Rates.js");
 const bcrypt = require("bcrypt")
 const { ERRORS } = require("../Constant/index.js")
-const encrypt = require("../Utils/encript.js")
+const { encrypt } = require("../Utils/encript.js")
+const ForgotLinks = require("../Models/Forgot")
+const nodemailer = require("nodemailer");
+const moment = require('moment');
+
+
+
+
+function generate(n) {
+    var add = 1, max = 12 - add;   // 12 is the min safe number Math.random() can generate without it starting to pad the end with zeros.   
+    if (n > max) {
+        return generate(max) + generate(n - max);
+    }
+    max = Math.pow(10, n + add);
+    var min = max / 10; // Math.pow(10, n) basically
+    var number = Math.floor(Math.random() * (max - min + 1)) + min;
+    return ("" + number).substring(add);
+}
+
+
+async function sendForgotEmail(data, url) {
+    let transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false,
+        auth: {
+            user: "ali.hassan.stu@gmail.com", // generated ethereal user
+            pass: "zkuqwxqilvuxaiea", // generated ethereal password
+        },
+    });
+
+    let info = await transporter.sendMail({
+        from: 'Scrapster', // sender address
+        to: data.email, // list of receivers
+        subject: "ForgotPassword Request from Scrapster", // Subject line
+        text: `Please use ${url}/auth/forgotpass?${data.token} to reset your password, this link will expire in 15 minutes, your OTP is ${data.otp}`,
+    });
+
+    console.log("Message sent: %s", info.messageId);
+    console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+}
+
+
+
+function randToken(lettersLength, numbersLength) {
+    var j, x, i;
+    var result = '';
+    var letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+    var numbers = '0123456789';
+    for (i = 0; i < lettersLength; i++) {
+        result += letters.charAt(Math.floor(Math.random() * letters.length));
+    }
+    for (i = 0; i < numbersLength; i++) {
+        result += numbers.charAt(Math.floor(Math.random() * numbers.length));
+    }
+    result = result.split("");
+    for (i = result.length - 1; i > 0; i--) {
+        j = Math.floor(Math.random() * (i + 1));
+        x = result[i];
+        result[i] = result[j];
+        result[j] = x;
+    }
+    result = result.join("");
+    return result
+}
 
 
 
@@ -247,11 +311,172 @@ const changePassword = async (req, res, next) => {
     return res.status(201).send({ status: true, message: "Password Change Successfully" });
 }
 
+const forgot = async (req, res, next) => {
+    try {
+
+        const email = req.body.email;
+        if (!email) {
+            return res.json(ERRORS.MISSING_PARAMS);
+        }
+
+        let ifUserExist = await User.findOne({ email });
+        if (!ifUserExist) {
+            return res.send({ status: false, message: 'No account found linked with provided email address' });
+        }
+
+        try {
+            const otp = generate(6);
+            const token = randToken(6, 6);
+            let data = { token, otp, email }
+            await ForgotLinks.create(data);
+            await sendForgotEmail(data, req.get('origin'));
+
+            return res.json({
+                status: true,
+                message: 'An email has been sent to you, please check your email and follow instructions to reset your password',
+            });
+        } catch (error) {
+            return res.json({ status: false, message: error.message })
+        }
+
+
+    } catch (error) {
+        console.log(error)
+        return res.json(ERRORS.SOMETHING_WRONG)
+    }
+}
+
+const checkForgotLink = async (req, res, next) => {
+    try {
+
+        let { token } = req.body;
+        if (token === "") {
+            return res.json({ status: false, message: "Missing Params" });
+        }
+        var dateToCheck = moment().add(15, 'minutes').toDate();
+
+        let result = await ForgotLinks.findOne({ token, expired: false, used: false }).lean().exec()
+
+        if (result) {
+            if (moment(result.created_at).isAfter(dateToCheck)) {
+                let _id = result._id;
+                await ForgotLinks.findOneAndUpdate({ _id }, { $set: { expired: true } }, { upsert: false })
+                return res.json({ status: false, message: 'Link Expired' })
+            } else {
+                return res.json({ status: true, message: 'Valid Reset Link' })
+            }
+        }
+        else {
+            return res.json({ status: false, message: 'Invalid Or Expired Reset Link' })
+        }
+    } catch (error) {
+        console.log(error)
+        return res.json(ERRORS.SOMETHING_WRONG)
+    }
+}
+
+
+const checkOTPandToken = async (req, res, next) => {
+    try {
+
+        let { token, otp } = req.body;
+        if (token === "" || otp === "") {
+            return res.json({ status: false, message: "Missing Params" });
+        }
+
+
+        var dateToCheck = moment().add(15, 'minutes').toDate();
+        let result = await ForgotLinks.findOne({ token, expired: false, used: false }).lean().exec()
+        if (result) {
+            if (moment(result.created_at).isAfter(dateToCheck)) {
+                let _id = result._id;
+                await ForgotLinks.findOneAndUpdate({ _id }, { $set: { expired: true } }, { upsert: false })
+                return res.json({ status: false, message: 'Link Expired' })
+            } else {
+                if (result.otp == otp) {
+                    return res.json({ status: true, message: 'Valid Reset OTP' })
+                } else {
+                    return res.json({ status: false, message: 'InValid Reset OTP' })
+                }
+            }
+        } else {
+            return res.json({ status: false, message: 'Invalid Or Expired Reset Link' })
+        }
+    } catch (error) {
+        console.log(error)
+        return res.json(ERRORS.SOMETHING_WRONG)
+    }
+}
+
+
+
+
+const changeByForgot = async (req, res, next) => {
+    try {
+
+        const body = req.body;
+        function validateWhiteSpace(val) {
+
+            console.log(typeof (val))
+            if (typeof (val) === "boolean") {
+                return true
+            } else {
+                return val.trim().length > 0
+            }
+        }
+
+        for (const property in body) {// missing params validation       
+            if (body[property] === "" || !validateWhiteSpace(body[property])) {
+                return next(ERRORS.MISSING_PARAMS)
+            } else {
+
+            }
+
+        }
+
+        let { token, email, otp, password } = req.body;
+        var dateToCheck = moment().add(15, 'minutes').toDate();
+        let result = await ForgotLinks.findOne({ token, expired: false, used: false, email }).lean().exec()
+        if (result) {
+            let _id = result._id;
+            if (moment(result.created_at).isAfter(dateToCheck)) {
+                await ForgotLinks.findOneAndUpdate({ _id }, { $set: { expired: true } }, { upsert: false })
+                return res.json({ status: false, message: 'Link Expired' })
+            } else {
+                if (result.otp == otp) {
+                    const saltRounds = 10;
+                    var salt = await bcrypt.genSalt(saltRounds);
+                    password = await bcrypt.hash(password, salt);
+                    await User.findOneAndUpdate({ email }, { $set: { password } })
+                    await ForgotLinks.findOneAndUpdate({ _id }, { $set: { expired: true, used: true } }, { upsert: false })
+                    return res.json({ status: true, message: 'Password Updated' });
+                } else {
+                    return res.json({ status: false, message: 'InValid OTP' })
+                }
+            }
+        } else {
+            return res.json({ status: false, message: `Either Link Is Invalid Or Expired, Or Email Isn't Associated With This URL` })
+        }
+    } catch (error) {
+        console.log(error)
+        return res.json(ERRORS.SOMETHING_WRONG)
+    }
+}
+
+
+
+
+
+
 const exp = {
     signin,
     register,
     checkingUser,
-    changePassword
+    checkForgotLink,
+    changePassword,
+    forgot,
+    checkOTPandToken,
+    changeByForgot
 }
 
 module.exports = exp;
