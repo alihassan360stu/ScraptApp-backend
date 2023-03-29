@@ -5,6 +5,7 @@ const Review = new Schema({
     comment: { type: String, index: true },
     userName: { type: String, index: true },
     userEmail: { type: String, index: true },
+    postId: { type: String, index: true }
 }, {
     timestamps: {
         createdAt: 'created_at',
