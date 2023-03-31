@@ -35,9 +35,10 @@ apiBase.use((err, res, req, next) => {
         success: "false"
     })
 })
-mongoDbconnection.connect(process.env.DB_URL).then(() => {
+mongoDbconnection.connect("mongodb+srv://alihassan:gjd4st4Dt34DZdEP@cluster0.uavkvl2.mongodb.net/scrapt?retryWrites=true&w=majority",
+    { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
 
-    apiBase.listen(process.env.host, () => {
-        console.log("login done")
+        apiBase.listen(process.env.host, () => {
+            console.log("login done")
+        })
     })
-})
