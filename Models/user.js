@@ -13,7 +13,7 @@ const user = new mongoose.Schema({
         ref: "Rate"
     }
 })
-
+//
 
 const userAuth = mongoose.model("User", user);
 module.exports = userAuth;
