@@ -19,7 +19,9 @@ apiBase.use(function (req, res, next) {
 });
 apiBase.use(express.static(path.join(__dirname, 'public')));
 apiBase.use(express.json());
-apiBase.use("/", auth);
+apiBase.use("/", (res,req)=>{
+req.send({message:"server done",status:"done"})
+});
 apiBase.use("/user", rate);
 apiBase.use("/review", Review);
 apiBase.use("/post", postUser);
