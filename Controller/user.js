@@ -39,9 +39,6 @@ async function sendForgotEmail(data, url) {
         subject: "ForgotPassword Request from Scrapster", // Subject line
         text: `Please use ${url}/auth/forgotpass?${data.token} to reset your password, this link will expire in 15 minutes, your OTP is ${data.otp}`,
     });
-
-    console.log("Message sent: %s", info.messageId);
-    console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
 }
 
 
@@ -178,8 +175,44 @@ const register = async (req, res, next) => {
     }
 
 }
+const getUser = async (req, res, next) => {
 
+    var userMatch
 
+    try {
+        userMatch = await User.aggregate([
+            {
+                $match: {
+                    type: true
+                }
+
+            },
+            {
+                $lookup: {
+
+                    from: "rates",
+                    localField: "rates_id",
+                    foreignField: "_id",
+                    as: "Rates",
+
+                },
+
+            },
+            {
+                $project: {
+                    "rates_id": 0,
+                    "Rates.user_id": 0
+                }
+            }
+
+        ]);
+    } catch (e) {
+        console.log(e)
+        return next(ERRORS.SOMETHING_WRONG);
+    }
+
+    res.send({data:userMatch,status:true,message:"User Found"})
+}
 const signin = async (req, res, next) => {
     var user = await User.findOne({ email: req.body.email })
     if (!user) {
@@ -417,7 +450,6 @@ const changeByForgot = async (req, res, next) => {
         const body = req.body;
         function validateWhiteSpace(val) {
 
-            console.log(typeof (val))
             if (typeof (val) === "boolean") {
                 return true
             } else {
@@ -476,7 +508,8 @@ const exp = {
     changePassword,
     forgot,
     checkOTPandToken,
-    changeByForgot
+    changeByForgot,
+    getUser
 }
 
 module.exports = exp;

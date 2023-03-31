@@ -5,16 +5,11 @@ const AythMiddle = () => [
         if (!req.headers.authorization) {
             return next({ status: false, message: "unauthorized" })
         }
-
         const token = req.headers.authorization.split(' ')[1];
 
         if (!token) {
             return next({ status: false, message: "unauthorized" })
         }
-
-        console.log("the ", token);
-
-
         const compare = await decrypt(token).catch((e) => {
             console.log("the error is ", e)
         })
