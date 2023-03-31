@@ -10,13 +10,13 @@ const rate = require("./Routes/Rate.js")
 var cors = require('cors')
 var Review = require("./Routes/Review.js")
 
-apiBase.use(function (req, res, next) {
-    //Enabling CORS
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-client-key, x-client-token, x-client-secret, Authorization");
-    next();
-});
+// apiBase.use(function (req, res, next) {
+//     //Enabling CORS
+//     res.header("Access-Control-Allow-Origin", "*");
+//     res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
+//     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-client-key, x-client-token, x-client-secret, Authorization");
+//     next();
+// });
 apiBase.use(express.static(path.join(__dirname, 'public')));
 apiBase.use(express.json());
 apiBase.use("/", (res,req)=>{
