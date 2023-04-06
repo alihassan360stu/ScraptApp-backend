@@ -6,7 +6,6 @@ const post = new mongoose.Schema({
     email: { type: String, require: true },
     name: { type: String, require: true },
     fAddress: { type: String, require: true },
-    nAddress: { type: String, require: true },
     city: { type: String, require: true },
     quantity: { type: Number, require: true },
     suggested: { type: Number, require: true },
