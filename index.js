@@ -5,9 +5,9 @@ const apiBase = express();
 const postUser = require("./Routes/postOrder.js")
 const mongoDbconnection = require("mongoose")
 dotenv.config();
+var cors = require('cors')
 const auth = require("./Routes/user.js")
 const rate = require("./Routes/Rate.js")
-var cors = require('cors')
 var Review = require("./Routes/Review.js")
 
 apiBase.use(function (req, res, next) {
