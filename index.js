@@ -10,18 +10,16 @@ const rate = require("./Routes/Rate.js")
 var cors = require('cors')
 var Review = require("./Routes/Review.js")
 
-// apiBase.use(function (req, res, next) {
-//     //Enabling CORS
-//     res.header("Access-Control-Allow-Origin", "*");
-//     res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
-//     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-client-key, x-client-token, x-client-secret, Authorization");
-//     next();
-// });
+apiBase.use(function (req, res, next) {
+    //Enabling CORS
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, x-client-key, x-client-token, x-client-secret, Authorization");
+    next();
+});
 apiBase.use(express.static(path.join(__dirname, 'public')));
 apiBase.use(express.json());
-apiBase.use("/", (res,req)=>{
-req.send({message:"server done",status:"done"})
-});
+apiBase.use("/",auth)
 apiBase.use("/user", rate);
 apiBase.use("/review", Review);
 apiBase.use("/post", postUser);
@@ -37,8 +35,16 @@ apiBase.use((err, res, req, next) => {
         success: "false"
     })
 })
-mongoDbconnection.connect("mongodb+srv://alihassan:gjd4st4Dt34DZdEP@cluster0.uavkvl2.mongodb.net/scrapt?retryWrites=true&w=majority",
-    { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
+// mongoDbconnection.connect("mongodb+srv://alihassan:gjd4st4Dt34DZdEP@cluster0.uavkvl2.mongodb.net/scrapt?retryWrites=true&w=majority",
+//     { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
+
+//         apiBase.listen(process.env.host, () => {
+//             console.log("login done")
+//         })
+//     })
+
+
+mongoDbconnection.connect("mongodb://localhost:27017/fyp",).then(() => {
 
         apiBase.listen(process.env.host, () => {
             console.log("login done")

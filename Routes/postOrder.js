@@ -2,7 +2,6 @@ const express = require("express").Router();
 const multer = require("multer")
 const { ERRORS } = require("../Constant/index.js");
 const PostOrder = require("../Models/PostOrder.js");
-const User = require("../Models/user.js")
 const { AythMiddle } = require("../Middleware/index.js")
 
 
@@ -56,9 +55,7 @@ express.post("/fetch", AythMiddle(), async (req, res, next) => {
 
     try {
         postUser = await PostOrder.find({ userId: req.body.userId });
-        console.log("the user ", postUser);
         if (!postUser) {
-            console.log("data not found");
             return next({ status: false, success: false, message: "Data Not Found" })
         }
     } catch (e) {
