@@ -9,6 +9,7 @@ var cors = require('cors')
 const auth = require("./Routes/user.js")
 const rate = require("./Routes/Rate.js")
 var Review = require("./Routes/Review.js")
+var contact = require("./Routes/Contact.js");
 
 apiBase.use(function (req, res, next) {
     //Enabling CORS
@@ -23,6 +24,7 @@ apiBase.use("/",auth)
 apiBase.use("/user", rate);
 apiBase.use("/review", Review);
 apiBase.use("/post", postUser);
+apiBase.use("/user", contact);
 apiBase.use(cors())
 apiBase.use((err, res, req, next) => {
     const { status } = err || 500;
