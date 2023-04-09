@@ -37,18 +37,18 @@ apiBase.use((err, res, req, next) => {
         success: "false"
     })
 })
-// mongoDbconnection.connect("mongodb+srv://alihassan:gjd4st4Dt34DZdEP@cluster0.uavkvl2.mongodb.net/scrapt?retryWrites=true&w=majority",
-//     { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
-
-//         apiBase.listen(process.env.host, () => {
-//             console.log("login done")
-//         })
-//     })
-
-
-mongoDbconnection.connect("mongodb://localhost:27017/fyp",).then(() => {
+mongoDbconnection.connect("mongodb+srv://alihassan:gjd4st4Dt34DZdEP@cluster0.uavkvl2.mongodb.net/scrapt?retryWrites=true&w=majority",
+    { useNewUrlParser: true, useUnifiedTopology: true }).then(() => {
 
         apiBase.listen(process.env.host, () => {
             console.log("login done")
         })
     })
+
+
+// mongoDbconnection.connect("mongodb://localhost:27017/fyp",).then(() => {
+
+//         apiBase.listen(process.env.host, () => {
+//             console.log("login done")
+//         })
+//     })
