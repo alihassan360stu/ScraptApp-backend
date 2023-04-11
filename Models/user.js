@@ -11,6 +11,13 @@ const user = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         // require: true,
         ref: "Rate"
+    },
+    subsribe: {
+        type: Boolean,
+        default: false
+    },
+    subsribe_id: {
+        type: String,
     }
 })
 //

@@ -10,6 +10,7 @@ const auth = require("./Routes/user.js")
 const rate = require("./Routes/Rate.js")
 var Review = require("./Routes/Review.js")
 var contact = require("./Routes/Contact.js");
+var UpgradePlan = require("./Routes/UpgradePlan.js");
 
 apiBase.use(function (req, res, next) {
     //Enabling CORS
@@ -20,11 +21,12 @@ apiBase.use(function (req, res, next) {
 });
 apiBase.use(express.static(path.join(__dirname, 'public')));
 apiBase.use(express.json());
-apiBase.use("/",auth)
+apiBase.use("/", auth)
 apiBase.use("/user", rate);
 apiBase.use("/review", Review);
 apiBase.use("/post", postUser);
 apiBase.use("/user", contact);
+apiBase.use("/plan", UpgradePlan);
 apiBase.use(cors())
 apiBase.use((err, res, req, next) => {
     const { status } = err || 500;
@@ -48,7 +50,7 @@ apiBase.use((err, res, req, next) => {
 
 mongoDbconnection.connect("mongodb://localhost:27017/fyp",).then(() => {
 
-        apiBase.listen(process.env.host, () => {
-            console.log("login done")
-        })
+    apiBase.listen(process.env.host, () => {
+        console.log("login done")
     })
+})

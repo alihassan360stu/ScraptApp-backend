@@ -72,7 +72,6 @@ const register = async (req, res, next) => {
 
     function validateWhiteSpace(val) {
 
-        console.log(typeof (val))
         if (typeof (val) === "boolean") {
             return true
         } else {

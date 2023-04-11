@@ -2,7 +2,7 @@ const express = require("express").Router();
 const multer = require("multer")
 const { ERRORS } = require("../Constant/index.js");
 const PostOrder = require("../Models/PostOrder.js");
-const { AythMiddle } = require("../Middleware/index.js")
+const { AythMiddle,subPlan } = require("../Middleware/index.js")
 
 
 
@@ -24,7 +24,7 @@ var storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage, limits: { fileSize: 6000000 }, fileFilter })
-express.post("/upload", AythMiddle(), upload.array("images"), async (req, res, next) => {
+express.post("/upload", AythMiddle(),subPlan(), upload.array("images"), async (req, res, next) => {
     var images = [];
     if (Array.isArray(req.files) && req.files.length !== 0) {
         req.files.map((value) => {
@@ -106,7 +106,6 @@ express.get("/all",AythMiddle(), async (req, res, next) => {
     var postUser;
     try {
         postUser = await PostOrder.find();
-        console.log("the user ", postUser);
         if (!postUser) {
             console.log("data not found");
             return next({ status: false, success: false, message: "Data Not Found" })
