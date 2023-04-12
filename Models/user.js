@@ -12,7 +12,7 @@ const user = new mongoose.Schema({
         // require: true,
         ref: "Rate"
     },
-    subsribe: {
+    allow: {
         type: Boolean,
         default: false
     },

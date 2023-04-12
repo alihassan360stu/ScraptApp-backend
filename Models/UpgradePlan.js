@@ -7,7 +7,6 @@ const UpgradePlan = new Schema({
     amount: { type: Number, index: true },
     email: { type: String, index: true },
     contact: { type: Number, index: true },
-    allow: { type: Boolean, default: false, index: true },
     p_method: { type: String, index: true },
     plane_text: { type: String, index: true },
     userId: { type: String, index: true },

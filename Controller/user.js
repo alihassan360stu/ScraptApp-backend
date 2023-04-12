@@ -210,7 +210,7 @@ const getUser = async (req, res, next) => {
         return next(ERRORS.SOMETHING_WRONG);
     }
 
-    res.send({data:userMatch,status:true,message:"User Found"})
+    res.send({ data: userMatch, status: true, message: "User Found" })
 }
 const signin = async (req, res, next) => {
     var user = await User.findOne({ email: req.body.email })

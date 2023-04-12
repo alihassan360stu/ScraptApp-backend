@@ -18,7 +18,7 @@ async function sendSubscribedMail(data, url) {
 
     let info = await transporter.sendMail({
         from: 'Scrapster', // sender address
-        to: "ali.hassan.stu@gmail.com", // list of receivers
+        to: { email: data.emai }, // list of receivers
         context: { name: data.name },
         subject: "Welcome To Scrapster", // Subject line
         text: `hi ${data.name} ! Thanks for using our services. You have subscribed our ${data.plane_text}`,
@@ -40,7 +40,7 @@ async function sendMailToMerchent(data, url) {
 
     let info = await transporter.sendMail({
         from: 'Scrapster', // sender address
-        to: "ali.hassan.stu@gmail.com", // list of receivers
+        to: "usmanghaniuz1999@gmail.com", // list of receivers
         subject: "Upgrade Plan", // Subject line
         text: `You have recived RS (${data.amount})!. ${data.name} has Subscribed your ${data.plane_text} ..  Account Number  ${data.account}`,
 
@@ -69,8 +69,6 @@ const UpgradePlan = async (req, res, next) => {
         const responce = await ress.save();
 
         try {
-
-            const d = await User.updateOne({ _id: req.body.userId }, { $set: { 'subsribe': true } })
             const b = await User.updateOne({ _id: req.body.userId }, { $set: { 'subsribe_id': responce._id } })
             if (!d || !b) {
                 return next(ERRORS.SOMETHING_WRONG);
@@ -80,7 +78,7 @@ const UpgradePlan = async (req, res, next) => {
             console.log(e)
             return next(ERRORS.SOMETHING_WRONG)
         }
-        res.send({ status: true, data: responce, message: "You will be notify through email " });
+        res.send({ status: true, data: responce, message: "Dear Customer. We are confirming your Plan Upgrade. It can take upto  24 hours. If it is not upgraded within 24 hours contact us through email." });
     } catch (e) {
         console.log(e)
         return next(ERRORS.SOMETHING_WRONG)
