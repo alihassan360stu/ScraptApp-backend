@@ -28,8 +28,8 @@ async function sendForgotEmail(data, url) {
         port: 587,
         secure: false,
         auth: {
-            user: "ali.hassan.stu@gmail.com", // generated ethereal user
-            pass: "zkuqwxqilvuxaiea", // generated ethereal password
+            user: "Scrapsterremoval@gmail.com", // generated ethereal user
+            pass: "yixthwkgdiixnknq", // generated ethereal password
         },
     });
 

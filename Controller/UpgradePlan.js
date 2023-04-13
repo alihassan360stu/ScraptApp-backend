@@ -11,14 +11,14 @@ async function sendSubscribedMail(data, url) {
         port: 587,
         secure: false,
         auth: {
-            user: "ali.hassan.stu@gmail.com", // generated ethereal user
-            pass: "zkuqwxqilvuxaiea", // generated ethereal password
+            user: "Scrapsterremoval@gmail.com", // generated ethereal user
+            pass: "yixthwkgdiixnknq", // generated ethereal password
         },
     });
 
     let info = await transporter.sendMail({
         from: 'Scrapster', // sender address
-        to: { email: data.emai }, // list of receivers
+        to: data.email, // list of receivers
         context: { name: data.name },
         subject: "Welcome To Scrapster", // Subject line
         text: `hi ${data.name} ! Thanks for using our services. You have subscribed our ${data.plane_text}`,
@@ -33,8 +33,8 @@ async function sendMailToMerchent(data, url) {
         port: 587,
         secure: false,
         auth: {
-            user: "ali.hassan.stu@gmail.com", // generated ethereal user
-            pass: "zkuqwxqilvuxaiea", // generated ethereal password
+            user: "Scrapsterremoval@gmail.com", // generated ethereal user
+            pass: "yixthwkgdiixnknq", // generated ethereal password
         },
     });
 
@@ -70,7 +70,7 @@ const UpgradePlan = async (req, res, next) => {
 
         try {
             const b = await User.updateOne({ _id: req.body.userId }, { $set: { 'subsribe_id': responce._id } })
-            if (!d || !b) {
+            if (!b) {
                 return next(ERRORS.SOMETHING_WRONG);
             }
 
