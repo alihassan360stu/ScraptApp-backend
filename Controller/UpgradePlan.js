@@ -11,8 +11,8 @@ async function sendSubscribedMail(data, url) {
         port: 587,
         secure: false,
         auth: {
-            user: "Scrapsterremoval@gmail.com", // generated ethereal user
-            pass: "yixthwkgdiixnknq", // generated ethereal password
+            user: "scrapter14@gmail.com", // generated ethereal user
+            pass: "mcghgwyzwvhmfpui", // generated ethereal password
         },
     });
 
@@ -33,8 +33,8 @@ async function sendMailToMerchent(data, url) {
         port: 587,
         secure: false,
         auth: {
-            user: "Scrapsterremoval@gmail.com", // generated ethereal user
-            pass: "yixthwkgdiixnknq", // generated ethereal password
+            user: "scrapter14@gmail.com", // generated ethereal user
+            pass: "mcghgwyzwvhmfpui", // generated ethereal password
         },
     });
 
