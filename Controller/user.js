@@ -6,6 +6,7 @@ const { encrypt } = require("../Utils/encript.js")
 const ForgotLinks = require("../Models/Forgot")
 const nodemailer = require("nodemailer");
 const moment = require('moment');
+var otpSendToMail = "";
 
 
 
@@ -28,8 +29,8 @@ async function sendForgotEmail(data, url) {
         port: 587,
         secure: false,
         auth: {
-            user: "Scrapsterremoval@gmail.com", // generated ethereal user
-            pass: "yixthwkgdiixnknq", // generated ethereal password
+            user: "scrapter14@gmail.com", // generated ethereal user
+            pass: "mcghgwyzwvhmfpui", // generated ethereal password
         },
     });
 
@@ -40,6 +41,27 @@ async function sendForgotEmail(data, url) {
         text: `Please use ${url}/auth/forgotpass?${data.token} to reset your password, this link will expire in 15 minutes, your OTP is ${data.otp}`,
     });
 }
+
+
+async function sendOTP(data) {
+    let transporter = nodemailer.createTransport({
+        host: "smtp.gmail.com",
+        port: 587,
+        secure: false,
+        auth: {
+            user: "scrapter14@gmail.com", // generated ethereal user
+            pass: "mcghgwyzwvhmfpui", // generated ethereal password
+        },
+    });
+
+    let info = await transporter.sendMail({
+        from: 'Scrapster', // sender address
+        to: data.email, // list of receivers
+        subject: "OTP Request from Scrapster", // Subject line
+        text: `Use this OTP to register your account on Scrapster! ${data.otp}`,
+    });
+}
+
 
 
 
@@ -69,7 +91,6 @@ function randToken(lettersLength, numbersLength) {
 
 const register = async (req, res, next) => {
     const body = req.body;
-
     function validateWhiteSpace(val) {
 
         if (typeof (val) === "boolean") {
@@ -128,6 +149,12 @@ const register = async (req, res, next) => {
         console.log("error", e)
         return next(ERRORS.SOMETHING_WRONG);
     }
+
+
+    const otp = generate(6);
+    otpSendToMail = otp;
+    await sendOTP({ email: body.email, otp: otpSendToMail })
+
 
     var data;
     try {

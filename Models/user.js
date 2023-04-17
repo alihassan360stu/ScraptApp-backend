@@ -7,6 +7,7 @@ const user = new mongoose.Schema({
     password: { type: String, index: true, require: true },
     email: { type: String, index: true, require: true },
     type: { type: Boolean, default: true, require: true }, // false mean normal user true mean junkyard
+    validUser: { type: Boolean, default: false },
     rates_id: {
         type: mongoose.Schema.Types.ObjectId,
         // require: true,
