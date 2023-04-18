@@ -29,8 +29,8 @@ async function sendForgotEmail(data, url) {
         port: 587,
         secure: false,
         auth: {
-            user: "scrapter14@gmail.com", // generated ethereal user
-            pass: "mcghgwyzwvhmfpui", // generated ethereal password
+            user: "ali.hassan.stu@gmail.com", // generated ethereal user
+            pass: "fnfkdwayxrtzhaft", // generated ethereal password
         },
     });
 
@@ -49,10 +49,12 @@ async function sendOTP(data) {
         port: 587,
         secure: false,
         auth: {
-            user: "scrapter14@gmail.com", // generated ethereal user
-            pass: "mcghgwyzwvhmfpui", // generated ethereal password
+            user: "ali.hassan.stu@gmail.com", // generated ethereal user
+            pass: "fnfkdwayxrtzhaft", // generated ethereal password
         },
     });
+
+    console.log("the email" , data.email)
 
     let info = await transporter.sendMail({
         from: 'Scrapster', // sender address
@@ -86,6 +88,85 @@ function randToken(lettersLength, numbersLength) {
     result = result.join("");
     return result
 }
+
+
+const beforeRegister = async (req, res, next) => {
+    const body = req.body;
+    function validateWhiteSpace(val) {
+
+        if (typeof (val) === "boolean") {
+            return true
+        } else {
+            return val.trim().length > 0
+        }
+    }
+
+    for (const property in body) {// missing params validation       
+        if (property === "rates_id" && body[property] === "") {
+
+        } else {
+
+            if (body[property] === "" || !validateWhiteSpace(body[property])) {
+                return next(ERRORS.MISSING_PARAMS)
+            } else {
+
+            }
+        }
+    }
+
+    const { password, confirm, rates_id } = req.body;
+
+    var rates;
+    try {
+        if (rates_id) {
+            rates = await Rate.findById(rates_id);
+            if (!rates) {
+                return next(ERRORS.SOMETHING_WRONG);
+            }
+        }
+    } catch (e) {
+        console.log("error", e);
+        return next(ERRORS.SOMETHING_WRONG);
+    }
+
+
+    if (await User.findOne({ email: body.email })) {
+        return next(ERRORS.DUPLICATE_EMAIL)
+    }
+
+    if (password !== confirm) {
+        return next({ status: false, message: "Invalid Password Please Try Again" })
+    }
+
+    try {
+        const otp = generate(6);
+        otpSendToMail = otp;
+        await sendOTP({ email: body.email, otp: otpSendToMail })
+    } catch (e) {
+        console.log("the error", e);
+        return next(ERRORS.SOMETHING_WRONG);
+    }
+
+    return res.status(201).send({ status: true, message: "user validation successfully", data: null })
+}
+
+
+
+
+const checkOTP = async (req, res, next) => {
+    if (req.body.otp === otpSendToMail) {
+
+        return res.status(201).send({ status: true, message: "Valid Rest OTP", data: null })
+
+    } else {
+        return res.status(201).send({ status: false, message: "Invalid Rest OTP", data: null })
+    }
+
+
+}
+
+
+
 
 
 
@@ -149,12 +230,6 @@ const register = async (req, res, next) => {
         console.log("error", e)
         return next(ERRORS.SOMETHING_WRONG);
     }
-
-
-    const otp = generate(6);
-    otpSendToMail = otp;
-    await sendOTP({ email: body.email, otp: otpSendToMail })
-
 
     var data;
     try {
@@ -535,7 +610,9 @@ const exp = {
     forgot,
     checkOTPandToken,
     changeByForgot,
-    getUser
+    getUser,
+    beforeRegister,
+    checkOTP
 }
 
 module.exports = exp;

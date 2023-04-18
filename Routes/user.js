@@ -1,10 +1,12 @@
 const router = require("express").Router();
-const { signin, register, checkingUser, changePassword, forgot, checkForgotLink, checkOTPandToken, changeByForgot,getUser } = require("../Controller/user.js")
+const { signin, register, checkingUser, changePassword, forgot, checkForgotLink, checkOTPandToken, changeByForgot, getUser, beforeRegister, checkOTP } = require("../Controller/user.js")
 const { AythMiddle } = require("../Middleware/index.js")
 // forgot
 router.post("/register", register);
 router.post("/signin", signin);
-router.get("/users",AythMiddle(),getUser);
+router.get("/users", AythMiddle(), getUser);
+router.post("/before/register", beforeRegister);
+router.post("/otp/registration", checkOTP);
 router.post("/forgot", forgot);
 router.post("/forgot/link", checkForgotLink);
 router.post("/forgot/otp", checkOTPandToken);
