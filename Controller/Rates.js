@@ -10,8 +10,8 @@ const totalRates = async (req, res, next) => {
         }
     }
 
-    if (i < 7) {
-        return next({ status: false, message: "Please Enter Itleast Six catagory Rates" })
+    if (i <2) {
+        return next({ status: false, message: "Please Enter Itleast one catagory Rates" })
     }
 
     try {
